@@ -181,10 +181,10 @@ public class Window {
 	 * Initializes the blocks
 	 */
 	public void initBlocks(){
-		for (int[] row : map){
-			for (int element : row){
-				if (element == 1){
-					blocks.add(new Block(x * 3, 0, z * 3, 2));
+		for (int i=0; i<4; i++){
+			for (int j=0; j<4; j++){
+				if (map[i][j] == 1){
+					blocks.add(new Block(i*3, 0, j*3, 2));
 				}
 			}
 		}
