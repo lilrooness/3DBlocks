@@ -13,30 +13,25 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 
 
-public class Window{
+public class Window {
 	
 	private int width;
 	private int height;
-	private float angle = 0;
+	private float angle;
 	
 	private boolean forward;
 	private boolean back;
 	private boolean left;
 	private boolean right;
 	
-	private int[][] map = {
-			{1,0,1,0},
-			{0,1,0,1},
-			{1,0,1,0},
-			{0,1,0,1}
-	};
+	private int[][] map;
 	
 	private ArrayList<Block> blocks;
 	
-	float x = 5;
-	float y = 0;
-	float z = 0;
-	float camAngle = 0;
+	float x;
+	float y;
+	float z;
+	float camAngle;
 	float lx;
 	float lz;
 	/**
@@ -47,7 +42,22 @@ public class Window{
 	public Window(int width, int height){
 		this.width = width;
 		this.height = height;
-		blocks = new ArrayList<Block>();
+		
+		map = {
+			{1,0,1,0},
+			{0,1,0,1},
+			{1,0,1,0},
+			{0,1,0,1}
+		};
+		
+		angle = 0;
+		x = 5;
+		y = 0;
+		z= 0;
+		camAngle = 0;
+		
+		blocks = new ArrayList<Block>(map.length + map[0].length + 1);
+		
 		try {
 			Display.setDisplayMode(new DisplayMode(width, height));
 			Display.create();
@@ -63,17 +73,19 @@ public class Window{
 	public void renderLoop(){
 		initLights();
 		ImageBank.texInit();
+		
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
-        GL11.glDepthFunc(GL11.GL_LEQUAL);
-        GL11.glHint(GL11.GL_PERSPECTIVE_CORRECTION_HINT, GL11.GL_NICEST);
+		GL11.glDepthFunc(GL11.GL_LEQUAL);
+		GL11.glHint(GL11.GL_PERSPECTIVE_CORRECTION_HINT, GL11.GL_NICEST);
 		GLU.gluPerspective(45, width/height, 1, 100);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		GL11.glViewport(0, 0, width, height);
 		
 		initBlocks();
+		
 		while(!Display.isCloseRequested()){
 			GL11.glLoadIdentity();
 			GLU.gluLookAt(x, y, z,
@@ -85,11 +97,16 @@ public class Window{
 			GL11.glPushMatrix();
 			GL11.glTranslatef(0, -0.5f, -8);
 			//GL11.glRotatef(angle, 1, 0, 0);
+		
 			renderBlocks();
+			
 			GL11.glPopMatrix();
 			GL11.glDisable(GL11.GL_LIGHTING);
+			
 			incAngle(0.01f);
+			
 			Display.update();
+			
 			pollInput();
 			checkMovement();
 		}
@@ -111,10 +128,11 @@ public class Window{
 	}
 	
 	public void incAngle(float inc){
-		if(angle<360){
-			angle+=inc;
-		}else{
-			angle=0;
+		
+		angle += inc;
+		
+		while (angle > 360.0){
+			angle -= 360.0;
 		}
 	}
 	
@@ -122,26 +140,13 @@ public class Window{
 	 * Processes keyboard input
 	 */
 	public void pollInput(){
-		if(Keyboard.isKeyDown(Keyboard.KEY_W)){
-			forward = true;
-		}else{
-			forward = false;
-		}
-		if(Keyboard.isKeyDown(Keyboard.KEY_S)){
-			back = true;
-		}else{
-			back = false;
-		}
-		if(Keyboard.isKeyDown(Keyboard.KEY_A)){
-			left = true;
-		}else{
-			left = false;
-		}
-		if(Keyboard.isKeyDown(Keyboard.KEY_D)){
-			right = true;
-		}else{
-			right = false;
-		}
+		forward = Keyboard.isKeyDown(Keyboard.KEY_W);
+		
+		back = Keyboard.isKeyDown(Keyboard.KEY_S);
+		
+		left = Keyboard.isKeyDown(Keyboard.KEY_A);
+		
+		right = Keyboard.isKeyDown(Keyboard.KEY_D);
 	}
 	
 	/**
@@ -152,19 +157,22 @@ public class Window{
 		float fraction = 0.001f;
 		
 		if(right){
-			camAngle+=0.001f;
+			camAngle += 0.001f;
 			lx = (float)Math.sin(camAngle);
 			lz = -(float)Math.cos(camAngle);
 		}
+		
 		if(left){
-			camAngle -=0.001f;
+			camAngle -= 0.001f;
 			lx = (float)Math.sin(camAngle);
 			lz = -(float)Math.cos(camAngle);
 		}
+		
 		if(forward){
 			x += lx * fraction;
 			z += lz * fraction;
 		}
+		
 		if(back){
 			x -= lx * fraction;
 			z -= lz * fraction;
@@ -175,10 +183,10 @@ public class Window{
 	 * Initializes the blocks
 	 */
 	public void initBlocks(){
-		for(int x=0; x<4; x++){
-			for(int z=0; z<4; z++){
-				if(map[x][z] == 1){
-					blocks.add(new Block(x*3, 0, z*3, 2));
+		for (int[] row : Map){}
+			for (int element : row)
+				if (element == 1){
+					blocks.add(new Block(x * 3, 0, z * 3, 2));
 				}
 			}
 		}
@@ -188,7 +196,7 @@ public class Window{
 	 * Renders the blocks
 	 */
 	public void renderBlocks(){
-		for(int i=0; i<blocks.size(); i++){
+		for(int i = 0; i < blocks.size(); i++){
 			blocks.get(i).renderObject();
 		}
 	}
