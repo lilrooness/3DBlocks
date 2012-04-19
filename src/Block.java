@@ -51,43 +51,70 @@ public class Block {
 	 * renders the object with the values that it has
 	 */
 	public void renderObject(){
+		
+		ImageBank.getBoxTex().bind();
+		
 		GL11.glBegin(GL11.GL_QUADS);
 		//front face
 		GL11.glColor3f(1, 0, 0);
+		GL11.glTexCoord2f(0.0f, 0.0f);
 		GL11.glVertex3f(xPos, yPos, zPos);
+		GL11.glTexCoord2f(1.0f,0.0f);
 		GL11.glVertex3f(xPos+width, yPos, zPos);
+		GL11.glTexCoord2f(1.0f, 1.0f);
 		GL11.glVertex3f(xPos+width, yPos+height, zPos);
+		GL11.glTexCoord2f(0.0f, 1.0f);
 		GL11.glVertex3f(xPos, yPos+height, zPos);
 		
 		//back face
+		GL11.glTexCoord2f(0.0f, 0.0f);
 		GL11.glVertex3f(xPos, yPos, zPos-depth);
+		GL11.glTexCoord2f(1.0f,0.0f);
 		GL11.glVertex3f(xPos+width, yPos, zPos-depth);
+		GL11.glTexCoord2f(1.0f, 1.0f);
 		GL11.glVertex3f(xPos+width, yPos+height, zPos-depth);
+		GL11.glTexCoord2f(0.0f, 1.0f);
 		GL11.glVertex3f(xPos, yPos+height, zPos-depth);
 		
 		//right face
 		GL11.glColor3f(0, 1, 0);
+		GL11.glTexCoord2f(0.0f, 0.0f);
 		GL11.glVertex3f(xPos+width, yPos, zPos);
+		GL11.glTexCoord2f(1.0f,0.0f);
 		GL11.glVertex3f(xPos+width, yPos, zPos-depth);
+		GL11.glTexCoord2f(1.0f, 1.0f);
 		GL11.glVertex3f(xPos+width, yPos+height, zPos-depth);
+		GL11.glTexCoord2f(0.0f, 1.0f);
 		GL11.glVertex3f(xPos+width, yPos+height, zPos);
 		
 		//left face
+		GL11.glTexCoord2f(0.0f, 0.0f);
 		GL11.glVertex3f(xPos, yPos, zPos);
+		GL11.glTexCoord2f(1.0f,0.0f);
 		GL11.glVertex3f(xPos, yPos, zPos-depth);
+		GL11.glTexCoord2f(1.0f, 1.0f);
 		GL11.glVertex3f(xPos, yPos+height, zPos-depth);
+		GL11.glTexCoord2f(0.0f, 1.0f);
 		GL11.glVertex3f(xPos, yPos+height, zPos);
 		
 		//top face
+		GL11.glTexCoord2f(0.0f, 0.0f);
 		GL11.glVertex3f(xPos, yPos+height, zPos);
+		GL11.glTexCoord2f(1.0f,0.0f);
 		GL11.glVertex3f(xPos, yPos+height, zPos-depth);
+		GL11.glTexCoord2f(1.0f, 1.0f);
 		GL11.glVertex3f(xPos+width, yPos+height, zPos-depth);
+		GL11.glTexCoord2f(0.0f, 1.0f);
 		GL11.glVertex3f(xPos+width, yPos+height, zPos);
 		
 		//bottom face
+		GL11.glTexCoord2f(0.0f, 0.0f);
 		GL11.glVertex3f(xPos, yPos, zPos);
+		GL11.glTexCoord2f(1.0f,0.0f);
 		GL11.glVertex3f(xPos, yPos, zPos-depth);
+		GL11.glTexCoord2f(1.0f, 1.0f);
 		GL11.glVertex3f(xPos+width, yPos, zPos-depth);
+		GL11.glTexCoord2f(0.0f, 1.0f);
 		GL11.glVertex3f(xPos+width, yPos, zPos);
 		GL11.glEnd();
 	}

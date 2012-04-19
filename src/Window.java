@@ -62,9 +62,13 @@ public class Window{
 	 */
 	public void renderLoop(){
 		initLights();
+		ImageBank.texInit();
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
+        GL11.glDepthFunc(GL11.GL_LEQUAL);
+        GL11.glHint(GL11.GL_PERSPECTIVE_CORRECTION_HINT, GL11.GL_NICEST);
 		GLU.gluPerspective(45, width/height, 1, 100);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		GL11.glViewport(0, 0, width, height);
@@ -199,7 +203,7 @@ public class Window{
         temp.order(ByteOrder.nativeOrder());
         GL11.glLight(GL11.GL_LIGHT1, GL11.GL_AMBIENT, (FloatBuffer)temp.asFloatBuffer().put(lightAmbient).flip());              // Setup The Ambient Light
         GL11.glLight(GL11.GL_LIGHT1, GL11.GL_DIFFUSE, (FloatBuffer)temp.asFloatBuffer().put(lightDiffuse).flip());              // Setup The Diffuse Light
-        GL11.glLight(GL11.GL_LIGHT1, GL11.GL_POSITION,(FloatBuffer)temp.asFloatBuffer().put(lightPosition).flip()); 
+        GL11.glLight(GL11.GL_LIGHT1, GL11.GL_POSITION,(FloatBuffer)temp.asFloatBuffer().put(lightPosition).flip());
 		
 		GL11.glEnable(GL11.GL_LIGHT1);
 	}
