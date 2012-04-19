@@ -1,3 +1,5 @@
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 
@@ -21,12 +23,6 @@ public class Window{
 	private boolean back;
 	private boolean left;
 	private boolean right;
-	
-	FloatBuffer matSpecular;
-	FloatBuffer matShinyness;
-	FloatBuffer lightPosition;
-	FloatBuffer whiteLight;
-	FloatBuffer lModelAmbient;
 	
 	private int[][] map = {
 			{1,0,1,0},
@@ -65,7 +61,7 @@ public class Window{
 	 * Performs rendering in a loop while the window is not closed
 	 */
 	public void renderLoop(){
-		
+		initLights();
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
@@ -81,13 +77,13 @@ public class Window{
 						  0, 1, 0);
 			
 			GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-			//GL11.glEnable(GL11.GL_LIGHTING);
+			GL11.glEnable(GL11.GL_LIGHTING);
 			GL11.glPushMatrix();
 			GL11.glTranslatef(0, -0.5f, -8);
 			//GL11.glRotatef(angle, 1, 0, 0);
 			renderBlocks();
 			GL11.glPopMatrix();
-			//GL11.glDisable(GL11.GL_LIGHTING);
+			GL11.glDisable(GL11.GL_LIGHTING);
 			incAngle(0.01f);
 			Display.update();
 			pollInput();
@@ -194,10 +190,17 @@ public class Window{
 	}
 	
 	public void initLights(){
-		float mspec[] = {1.0f, 1.0f, 1.0f, 1.0f};
-		matSpecular.wrap(mspec);
-		GL11.glLight(GL11.GL_LIGHT0, GL11.GL_SPECULAR, matSpecular);
+		GL11.glShadeModel(GL11.GL_SMOOTH);
+		float[] lightAmbient = {0.5f, 0.5f, 0.5f, 1.0f};
+		float[] lightDiffuse = { 1.0f, 1.0f, 1.0f, 1.0f };
+		float[] lightPosition = { 1.0f, 1.0f, 2.0f, 1.0f };
 		
+		ByteBuffer temp = ByteBuffer.allocateDirect(16);
+        temp.order(ByteOrder.nativeOrder());
+        GL11.glLight(GL11.GL_LIGHT1, GL11.GL_AMBIENT, (FloatBuffer)temp.asFloatBuffer().put(lightAmbient).flip());              // Setup The Ambient Light
+        GL11.glLight(GL11.GL_LIGHT1, GL11.GL_DIFFUSE, (FloatBuffer)temp.asFloatBuffer().put(lightDiffuse).flip());              // Setup The Diffuse Light
+        GL11.glLight(GL11.GL_LIGHT1, GL11.GL_POSITION,(FloatBuffer)temp.asFloatBuffer().put(lightPosition).flip()); 
+		
+		GL11.glEnable(GL11.GL_LIGHT1);
 	}
-
 }
