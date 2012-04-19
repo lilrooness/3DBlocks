@@ -24,7 +24,12 @@ public class Window {
 	private boolean left;
 	private boolean right;
 	
-	private int[][] map;
+	private int[][] map= {
+			{1,0,1,0},
+			{0,1,0,1},
+			{1,0,1,0},
+			{0,1,0,1}
+		};
 	
 	private ArrayList<Block> blocks;
 	
@@ -42,13 +47,6 @@ public class Window {
 	public Window(int width, int height){
 		this.width = width;
 		this.height = height;
-		
-		map = {
-			{1,0,1,0},
-			{0,1,0,1},
-			{1,0,1,0},
-			{0,1,0,1}
-		};
 		
 		angle = 0;
 		x = 5;
@@ -183,8 +181,8 @@ public class Window {
 	 * Initializes the blocks
 	 */
 	public void initBlocks(){
-		for (int[] row : Map){}
-			for (int element : row)
+		for (int[] row : map){
+			for (int element : row){
 				if (element == 1){
 					blocks.add(new Block(x * 3, 0, z * 3, 2));
 				}
