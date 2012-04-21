@@ -15,14 +15,13 @@ import org.lwjgl.util.glu.GLU;
 
 public class Window {
 	
+	
 	private int width;
 	private int height;
 	private float angle;
 	
-	private boolean forward;
-	private boolean back;
-	private boolean left;
-	private boolean right;
+	private UserControl userKeyboard;
+	private Camera camera;
 	
 	private int[][] map= {
 			{1,0,1,0},
@@ -33,12 +32,7 @@ public class Window {
 	
 	private ArrayList<Block> blocks;
 	
-	float x;
-	float y;
-	float z;
-	float camAngle;
-	float lx;
-	float lz;
+	
 	/**
 	 * Constructor creates a new Display
 	 * @param width
@@ -47,12 +41,7 @@ public class Window {
 	public Window(int width, int height){
 		this.width = width;
 		this.height = height;
-		
-		angle = 0;
-		x = 5;
-		y = 0;
-		z= 0;
-		camAngle = 0;
+
 		
 		blocks = new ArrayList<Block>(map.length + map[0].length + 1);
 		
@@ -63,6 +52,9 @@ public class Window {
 			JOptionPane.showMessageDialog(null, "Could not create display (see stack trace)");
 			e.printStackTrace();
 		}
+		
+		userKeyboard = new UserControl();
+		camera = new Camera();
 	}
 	
 	/**
@@ -86,27 +78,23 @@ public class Window {
 		
 		while(!Display.isCloseRequested()){
 			GL11.glLoadIdentity();
-			GLU.gluLookAt(x, y, z,
-						  x+lx, 0, z+lz,
-						  0, 1, 0);
+			
+			camera.moveCamera();
 			
 			GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 			GL11.glEnable(GL11.GL_LIGHTING);
 			GL11.glPushMatrix();
 			GL11.glTranslatef(0, -0.5f, -8);
-			//GL11.glRotatef(angle, 1, 0, 0);
 		
 			renderBlocks();
 			
 			GL11.glPopMatrix();
 			GL11.glDisable(GL11.GL_LIGHTING);
 			
-			incAngle(0.01f);
 			
 			Display.update();
 			
-			pollInput();
-			checkMovement();
+			move();
 		}
 		Display.destroy();
 	}
@@ -125,55 +113,26 @@ public class Window {
 		return height;
 	}
 	
-	public void incAngle(float inc){
-		
-		angle += inc;
-		
-		while (angle > 360.0){
-			angle -= 360.0;
-		}
-	}
-	
-	/**
-	 * Processes keyboard input
-	 */
-	public void pollInput(){
-		forward = Keyboard.isKeyDown(Keyboard.KEY_W);
-		
-		back = Keyboard.isKeyDown(Keyboard.KEY_S);
-		
-		left = Keyboard.isKeyDown(Keyboard.KEY_A);
-		
-		right = Keyboard.isKeyDown(Keyboard.KEY_D);
-	}
 	
 	/**
 	 * Moves the camera
 	 */
-	public void checkMovement(){
+	public void move(){
 		
-		float fraction = 0.001f;
-		
-		if(right){
-			camAngle += 0.001f;
-			lx = (float)Math.sin(camAngle);
-			lz = -(float)Math.cos(camAngle);
+		if(userKeyboard.isRightPressed()){
+			camera.shiftRight();
 		}
 		
-		if(left){
-			camAngle -= 0.001f;
-			lx = (float)Math.sin(camAngle);
-			lz = -(float)Math.cos(camAngle);
+		if(userKeyboard.isLeftPressed()){
+			camera.shiftLeft();
 		}
 		
-		if(forward){
-			x += lx * fraction;
-			z += lz * fraction;
+		if(userKeyboard.isForwardPressed()){
+			camera.moveForward();
 		}
 		
-		if(back){
-			x -= lx * fraction;
-			z -= lz * fraction;
+		if(userKeyboard.isBackPressed()){
+			camera.moveBack();
 		}
 	}
 	
@@ -181,10 +140,10 @@ public class Window {
 	 * Initializes the blocks
 	 */
 	public void initBlocks(){
-		for (int i=0; i<4; i++){
-			for (int j=0; j<4; j++){
+		for (int i = 0; i < map.length; i++){
+			for (int j = 0; j < map[0].length; j++){
 				if (map[i][j] == 1){
-					blocks.add(new Block(i*3, 0, j*3, 2));
+					blocks.add(new Block(i * 3, 0, j * 3, 2));
 				}
 			}
 		}
@@ -194,8 +153,8 @@ public class Window {
 	 * Renders the blocks
 	 */
 	public void renderBlocks(){
-		for(int i = 0; i < blocks.size(); i++){
-			blocks.get(i).renderObject();
+		for(Block block : blocks){
+			block.renderObject();
 		}
 	}
 	
